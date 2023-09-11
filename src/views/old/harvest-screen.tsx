@@ -25,7 +25,7 @@ const HarvestScreen = () => {
             </ScrollView>
             <FAB
                 visible={true}
-                icon={{ name: 'add', color: 'white' }}
+                icon={{ name: 'add', color: '#000' }}
                 color='#18c460'
                 placement="right"
             />

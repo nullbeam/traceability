@@ -1,11 +1,12 @@
-import { FAB } from '@rneui/themed';
-import moment from 'moment';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Jazzicon from 'react-native-jazzicon';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Jazzicon from 'react-native-jazzicon'
+import moment from "moment";
+import { ScrollView } from 'react-native';
+import { FAB } from '@rneui/themed';
 
-const StoredScreen = () => {
-    const list = [1,2,3]  
+const SownScreen = ({ navigation }: any) => {
+    const list = [1,2,3,4,5,6,7,8,10]  
     return (
         <View style={styles.container}>
             <ScrollView>
@@ -25,9 +26,10 @@ const StoredScreen = () => {
             </ScrollView>
             <FAB
                 visible={true}
-                icon={{ name: 'add', color: 'white' }}
+                icon={{ name: 'add', color: '#000' }}
                 color='#18c460'
                 placement="right"
+                onPress={() => navigation.navigate('SownFormScreen')}
             />
         </View>
     );
@@ -68,4 +70,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default StoredScreen;
+export default SownScreen;

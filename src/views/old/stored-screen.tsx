@@ -4,8 +4,8 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Jazzicon from 'react-native-jazzicon';
 
-const LogisticScreen = () => {
-    const list = [1,2,3,4]  
+const StoredScreen = () => {
+    const list = [1,2,3]  
     return (
         <View style={styles.container}>
             <ScrollView>
@@ -25,7 +25,7 @@ const LogisticScreen = () => {
             </ScrollView>
             <FAB
                 visible={true}
-                icon={{ name: 'add', color: 'white' }}
+                icon={{ name: 'add', color: '#000' }}
                 color='#18c460'
                 placement="right"
             />
@@ -68,4 +68,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default LogisticScreen;
+export default StoredScreen;
