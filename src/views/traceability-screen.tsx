@@ -1,29 +1,45 @@
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import NewLotScreen from './new-lot-screen';
+import ScanLotScreen from './scan-lot-screen';
+import SuccessfulScreen from './successful-screen';
 
-const TraceabilityScreen = ({ navigation }: any) => {
-  return (
-    <View style={styles.container}>
-        <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => /*navigation.navigate('SownScreen')*/ console.log(1)}>
-                <Icon size={52} name={'plus-circle'} style={{color: '#fff'}}/>
-                <Text style={styles.buttonText}>New Lot</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => console.log(2)}>
-                <Icon size={52} name={'qrcode'} style={{color: '#fff'}}/>
-                <Text style={styles.buttonText}>Scan Lot</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => console.log(3)}>
-                <Icon size={52} name={'search'} style={{color: '#fff'}}/>
-                <Text style={styles.buttonText}>Search Lot</Text>
-            </TouchableOpacity>
+const TraceabilityMainScreen = ({ navigation }: any) => {
+    return (
+        <View style={styles.container}>
+            <View style={styles.buttonsContainer}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.push('NewLotScreen')}>
+                    <Icon size={52} name={'plus-circle'} style={{color: '#fff'}}/>
+                    <Text style={styles.buttonText}>New Lot</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.push('ScanLotScreen')}>
+                    <Icon size={52} name={'qrcode'} style={{color: '#fff'}}/>
+                    <Text style={styles.buttonText}>Scan Lot</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => console.log(3)}>
+                    <Icon size={52} name={'search'} style={{color: '#fff'}}/>
+                    <Text style={styles.buttonText}>Search Lot</Text>
+                </TouchableOpacity>
+            </View>
         </View>
-    </View>
-  );
+    );
 }
 
-const screenWidth = Dimensions.get('window').width;
+const Stack = createNativeStackNavigator();
+
+const TraceabilityScreen = ({ navigation }: any) => {
+    return (
+        <Stack.Navigator initialRouteName="TraceabilityMainScreen">
+          <Stack.Screen name="TraceabilityMainScreen" component={TraceabilityMainScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
+          <Stack.Screen name="NewLotScreen" component={NewLotScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
+          <Stack.Screen name="SuccessfulScreen" component={SuccessfulScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
+          <Stack.Screen name="ScanLotScreen" component={ScanLotScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
+        </Stack.Navigator>
+    );
+}
+
 const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({

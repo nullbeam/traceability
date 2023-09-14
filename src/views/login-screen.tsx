@@ -27,7 +27,7 @@ const AuthScreen = ({ navigation }: any) => {
             privateKey = Utils.generatePrivateKey();
             await AsyncStorage.setItem('privatekey', privateKey);
         }
-        navigation.navigate('MainScreen', { sreen: 'TraceabilityScreen' });
+        navigation.navigate('MainScreen', { screen: 'TraceabilityScreen' });
         // try {
         //     await Auth.signIn(user.username, user.password);
         //     navigation.navigate('Home');
