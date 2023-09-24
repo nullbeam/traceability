@@ -14,14 +14,14 @@ const AuthScreen = ({ navigation }: any) => {
     }
 
     const onSignIn = async () => {
-        if (!user.username || !user.password) {
-            Alert.alert('Please, complete username and password');
-            return;
-        }
-        if (user.username != 'paltblock' || user.password != '1u23?0G') {
-            Alert.alert('Invalid username or password');
-            return;
-        }
+        // if (!user.username || !user.password) {
+        //     Alert.alert('Please, complete username and password');
+        //     return;
+        // }
+        // if (user.username != 'paltblock' || user.password != '1u23?0G') {
+        //     Alert.alert('Invalid username or password');
+        //     return;
+        // }
         let privateKey = await AsyncStorage.getItem('privatekey');
         if (!privateKey) {
             privateKey = Utils.generatePrivateKey();

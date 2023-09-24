@@ -1,13 +1,17 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { ABI, CONTRACT_ADDRESS, EthCore } from '../services/eth-core';
 import AsyncStorage from '@react-native-community/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Clipboard from '@react-native-community/clipboard';
+import Toast from 'react-native-root-toast';
 
-const NewLotScreen = ({ navigation }: any) => {
+const AddToLotScreen = ({ route, navigation }: any) => {
+    const { lot } = route.params;
     const [spinnerVisible, setSpinnerVisible] = React.useState<boolean>(false);
     const [companyId, setCompanyId] = React.useState<number | undefined>(undefined);
     const [operationStartDate, setOperationStartDate] = React.useState<Date>(new Date((new Date()).setHours(0,0,0)));
@@ -35,13 +39,13 @@ const NewLotScreen = ({ navigation }: any) => {
         });
         const contractInstance = ethereum.getInstanceContract(ABI, CONTRACT_ADDRESS);
         const methodToExecute = contractInstance.methods.insertLotProcess(
-            0, // uint8 _currentProcess,
+            lot.processId, // uint8 _currentProcess,
             companyId, // string memory _companyId,
             operationStartDate.getTime(), // uint _operationStartDate,
             operationStartDate.getTime(), // uint _operationEndDate,
             location, // string memory _location,
             additionalInformation, // string memory _additionalInformation,
-            0 // uint _lotId
+            lot.lotId // uint _lotId
         );
         const receipt = await ethereum.sendTransaction(CONTRACT_ADDRESS, methodToExecute, 0);
         const logData = receipt.logs[0].data;
@@ -56,15 +60,35 @@ const NewLotScreen = ({ navigation }: any) => {
         navigation.push('SuccessfulScreen', { transactionHash: receipt.transactionHash, lotId, processId, sender });
     }
 
+    const writeToClipboard = async () => {
+        await Clipboard.setString("xxxxxxxxxx");
+        Toast.show("Copied to clipboard", {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.BOTTOM,
+        });
+    }
+
     return (
         <ScrollView style={styles.container}>
             <Spinner visible={spinnerVisible}/>
             <View style={styles.formContainer}>
-                <Text style={styles.formTitle}>CREATE LOT</Text>
+                <Text style={styles.formTitle}>ADD TO LOT</Text>
+                <View style={{paddingVertical: 16}}/>
+                <View style={styles.formGroupInput}>
+                    <Text style={styles.formGroupInputLabel}>Lot code:</Text>
+                    <TextInput style={[styles.formGroupInputText, {backgroundColor: '#bdbdbd'}]} placeholder="First process" value={lot.lotId} editable={false} textAlign='right'/>
+                    <TouchableOpacity onPress={writeToClipboard}>
+                        <MaterialIcon size={20} name="content-copy" color={'#1f1f1f'}/>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={styles.buttonSecundary} onPress={() => navigation.push('TraceabilityLotScreen', { lot })}>
+                    <Text style={[styles.buttonText, { color: '#1f1f1f' }]}>See traceability</Text>
+                </TouchableOpacity>
+                <View style={{marginBottom: 20, borderWidth: 1, borderColor: '#18c460'}}/>
                 <View style={{paddingVertical: 16}}/>
                 <View style={styles.formGroupInput}>
                     <Text style={styles.formGroupInputLabel}>Current process:</Text>
-                    <TextInput style={[styles.formGroupInputText, {backgroundColor: '#bdbdbd'}]} placeholder="New process" value={undefined} editable={false}/>
+                    <TextInput style={[styles.formGroupInputText, {backgroundColor: '#bdbdbd'}]} placeholder="First process" value={lot.processId} editable={false} textAlign='right'/>
                 </View>
                 <View style={{paddingVertical: 8}}/>
                 <View style={styles.formGroupInput}>
@@ -228,6 +252,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         lineHeight: 20
+    },
+    buttonSecundary: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        backgroundColor: '#B1FE93',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
+        marginVertical: 16,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
     }
 });
 
@@ -249,4 +290,4 @@ const pickerStyles = () => {
     };
 };
 
-export default NewLotScreen;
+export default AddToLotScreen;

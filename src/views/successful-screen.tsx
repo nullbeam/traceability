@@ -35,7 +35,7 @@ const SuccessfulScreen = ({ route, navigation }: any) => {
     }
 
     const writeToClipboard = async () => {
-        await Clipboard.setString("xxxxxxxxxx");
+        await Clipboard.setString(transactionHash);
         Toast.show("Copied to clipboard", {
             duration: Toast.durations.SHORT,
             position: Toast.positions.BOTTOM,
@@ -65,6 +65,13 @@ const SuccessfulScreen = ({ route, navigation }: any) => {
                 <View style={styles.dataContainerData}>
                     <Text style={{color: '#1f1f1f'}}>Lot code:</Text>
                     <Text style={{color: '#1f1f1f', flex: 1}} numberOfLines={1} ellipsizeMode='middle'>{lotId}</Text>
+                    <TouchableOpacity style={{alignSelf: 'flex-end'}} onPress={writeToClipboard}>
+                        <Icon size={20} name="content-copy" color={'#1f1f1f'}/>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.dataContainerData}>
+                    <Text style={{color: '#1f1f1f'}}>Proccess code:</Text>
+                    <Text style={{color: '#1f1f1f', flex: 1}} numberOfLines={1} ellipsizeMode='middle'>{processId}</Text>
                     <TouchableOpacity style={{alignSelf: 'flex-end'}} onPress={writeToClipboard}>
                         <Icon size={20} name="content-copy" color={'#1f1f1f'}/>
                     </TouchableOpacity>
