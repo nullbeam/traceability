@@ -6,8 +6,10 @@ import RNPickerSelect from 'react-native-picker-select';
 import { ABI, CONTRACT_ADDRESS, EthCore } from '../services/eth-core';
 import AsyncStorage from '@react-native-community/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { useIsFocused } from '@react-navigation/native';
 
 const NewLotScreen = ({ navigation }: any) => {
+    const isFocused = useIsFocused();
     const [spinnerVisible, setSpinnerVisible] = React.useState<boolean>(false);
     const [companyId, setCompanyId] = React.useState<number | undefined>(undefined);
     const [operationStartDate, setOperationStartDate] = React.useState<Date>(new Date((new Date()).setHours(0,0,0)));
@@ -16,45 +18,81 @@ const NewLotScreen = ({ navigation }: any) => {
     const [showOperationEndDate, setShowOperationEndDate] = React.useState<boolean>(false);
     const [location, setLocation] = React.useState<string>("");
     const [additionalInformation, setAdditionalInformation] = React.useState<string>("");
+    const [companies, setCompanies] = React.useState<Array<any>>([]);
 
     const onSave = async () => {
         setSpinnerVisible(true);
         if (companyId === undefined) {
+            setSpinnerVisible(false);
             Alert.alert("Select a company, please");
             return;
         }
-        const privateKey = await AsyncStorage.getItem('privatekey') || '';
-        const ethereum = new EthCore({
-            host: 'https://polygon-mumbai-bor.publicnode.com',
-            privateKey,
-            options: {
-                chainId: 80001,
-                gasPrice: 9500000000,
-                gasLimitMultiplier: 2
-            }
-        });
-        const contractInstance = ethereum.getInstanceContract(ABI, CONTRACT_ADDRESS);
-        const methodToExecute = contractInstance.methods.insertLotProcess(
-            0, // uint8 _currentProcess,
-            companyId, // string memory _companyId,
-            operationStartDate.getTime(), // uint _operationStartDate,
-            operationStartDate.getTime(), // uint _operationEndDate,
-            location, // string memory _location,
-            additionalInformation, // string memory _additionalInformation,
-            0 // uint _lotId
-        );
-        const receipt = await ethereum.sendTransaction(CONTRACT_ADDRESS, methodToExecute, 0);
-        const logData = receipt.logs[0].data;
-        const topics = receipt.logs[0].topics;
-        const typesArray = [
-            {type: 'uint256', name: 'lotId', indexed: true},
-            {type: 'uint8', name: 'processId', indexed: true},
-            {type: 'address', name: 'sender'}
-        ];
-        const { lotId, processId, sender } = await ethereum.web3Instance.eth.abi.decodeLog(typesArray, logData, topics.slice(1));
-        setSpinnerVisible(false);
-        navigation.push('SuccessfulScreen', { transactionHash: receipt.transactionHash, lotId, processId, sender });
+        try {
+            const privateKey = await AsyncStorage.getItem('privatekey') || '';
+            const ethereum = new EthCore({
+                host: 'https://polygon-mumbai-bor.publicnode.com',
+                privateKey,
+                options: {
+                    chainId: 80001,
+                    gasPrice: 9500000000,
+                    gasLimitMultiplier: 2
+                }
+            });
+            const contractInstance = ethereum.getInstanceContract(ABI, CONTRACT_ADDRESS);
+            const methodToExecute = contractInstance.methods.insertLotProcess(
+                0, // uint8 _currentProcess,
+                companyId, // string memory _companyId,
+                operationStartDate.getTime(), // uint _operationStartDate,
+                operationStartDate.getTime(), // uint _operationEndDate,
+                location, // string memory _location,
+                additionalInformation, // string memory _additionalInformation,
+                0 // uint _lotId
+            );
+            const receipt = await ethereum.sendTransaction(CONTRACT_ADDRESS, methodToExecute, 0);
+            const logData = receipt.logs[0].data;
+            const topics = receipt.logs[0].topics;
+            const typesArray = [
+                {type: 'uint256', name: 'lotId', indexed: true},
+                {type: 'uint8', name: 'processId', indexed: true},
+                {type: 'address', name: 'sender'}
+            ];
+            const { lotId, processId, sender } = await ethereum.web3Instance.eth.abi.decodeLog(typesArray, logData, topics.slice(1));
+            setSpinnerVisible(false);
+            navigation.push('SuccessfulScreen', { transactionHash: receipt.transactionHash, lotId, processId, sender });
+        } catch (error: any) {
+            Alert.alert(error.message);
+            setSpinnerVisible(false);
+        }
     }
+
+    React.useEffect(() => {
+        const loadCompanies = async () => {
+            const privateKey = await AsyncStorage.getItem('privatekey') || '';
+            const ethereum = new EthCore({
+                host: 'https://polygon-mumbai-bor.publicnode.com',
+                privateKey,
+                options: {
+                    chainId: 80001,
+                    gasPrice: 9500000000,
+                    gasLimitMultiplier: 2
+                }
+            });
+            const contractInstance = ethereum.getInstanceContract(ABI, CONTRACT_ADDRESS);
+            const data = await contractInstance.methods.getCompanies().call();
+            const _companies = data.map((item: any) => { 
+                return {
+                    value: item[0],
+                    documentId: item[0],
+                    label: item[1],
+                    name: item[1],
+                    location: item[2],
+                    processes: item[3]
+                }
+            })
+            setCompanies(_companies.filter((x: any) => x.processes.includes("1")));
+        };
+        loadCompanies();
+    }, [isFocused]);
 
     return (
         <ScrollView style={styles.container}>
@@ -64,7 +102,7 @@ const NewLotScreen = ({ navigation }: any) => {
                 <View style={{paddingVertical: 16}}/>
                 <View style={styles.formGroupInput}>
                     <Text style={styles.formGroupInputLabel}>Current process:</Text>
-                    <TextInput style={[styles.formGroupInputText, {backgroundColor: '#bdbdbd'}]} placeholder="New process" value={undefined} editable={false}/>
+                    <TextInput style={[styles.formGroupInputText, {backgroundColor: '#bdbdbd', fontSize: 12}]} placeholder="New process -> Seed Process" value={undefined} editable={false}/>
                 </View>
                 <View style={{paddingVertical: 8}}/>
                 <View style={styles.formGroupInput}>
@@ -72,14 +110,13 @@ const NewLotScreen = ({ navigation }: any) => {
                     <View style={{flex: 1}}>
                         <RNPickerSelect
                             useNativeAndroidPickerStyle={false}
-                            onValueChange={(value, i) => { setCompanyId(value) }}
+                            onValueChange={(value, i) => { 
+                                setCompanyId(value);
+                                const location = companies.find(x => x.value == value)?.location;
+                                if (location) setLocation(location);
+                            }}
                             value={companyId}
-                            items={[
-                                {label: 'Company 1', value: 0},
-                                {label: 'Company 2', value: 1},
-                                {label: 'Company 3', value: 2},
-                                {label: 'Company 4', value: 3},
-                            ]}
+                            items={companies}
                             style={pickerStyles()}
                             Icon={() => {<Icon size={16} name={'angle-down'} color='#1f1f1f'/>}}
                         />

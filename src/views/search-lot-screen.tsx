@@ -9,12 +9,15 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { Utils } from '../utils';
 import Jazzicon from 'react-native-jazzicon';
 import moment from "moment";
+import { useIsFocused } from '@react-navigation/native';
 
 const SearchLotScreen = ({ navigation }: any) => {
+    const isFocused = useIsFocused();
     const [spinnerVisible, setSpinnerVisible] = React.useState<boolean>(false);
     const [lotCode, setLotCode] = React.useState<string | undefined>(undefined);
     const [companyId, setCompanyId] = React.useState<number | undefined>(undefined);
     const [lotProcesses, setLotProcesses] = React.useState<any>([]);
+    const [companies, setCompanies] = React.useState<Array<any>>([]);
     
     const searchLot = async () => {
         setSpinnerVisible(true);
@@ -77,10 +80,39 @@ const SearchLotScreen = ({ navigation }: any) => {
     }
 
     const navigateToLot = (item: any, index: number) => {
-        if (index === lotProcesses.length - 1) {
+        if (index === lotProcesses.length - 1 && index < 6) {
             navigation.push('AddToLotScreen', { lot: item })
         }
     };
+
+    React.useEffect(() => {
+        const loadCompanies = async () => {
+            const privateKey = await AsyncStorage.getItem('privatekey') || '';
+            const ethereum = new EthCore({
+                host: 'https://polygon-mumbai-bor.publicnode.com',
+                privateKey,
+                options: {
+                    chainId: 80001,
+                    gasPrice: 9500000000,
+                    gasLimitMultiplier: 2
+                }
+            });
+            const contractInstance = ethereum.getInstanceContract(ABI, CONTRACT_ADDRESS);
+            const data = await contractInstance.methods.getCompanies().call();
+            const _companies = data.map((item: any) => { 
+                return {
+                    value: item[0],
+                    documentId: item[0],
+                    label: item[1],
+                    name: item[1],
+                    location: item[2],
+                    processes: item[3]
+                }
+            })
+            setCompanies(_companies);
+        };
+        loadCompanies();
+    }, [isFocused]);
 
     return (
         <ScrollView style={styles.container}>
@@ -100,12 +132,7 @@ const SearchLotScreen = ({ navigation }: any) => {
                             useNativeAndroidPickerStyle={false}
                             onValueChange={(value, i) => { setCompanyId(value) }}
                             value={companyId}
-                            items={[
-                                {label: 'Company 1', value: 0},
-                                {label: 'Company 2', value: 1},
-                                {label: 'Company 3', value: 2},
-                                {label: 'Company 4', value: 3},
-                            ]}
+                            items={companies}
                             style={pickerStyles()}
                             Icon={() => {<Icon size={16} name={'angle-down'}/>}}
                         />
@@ -129,7 +156,7 @@ const SearchLotScreen = ({ navigation }: any) => {
                                 <View style={{flex: 1}}>
                                     <Text style={itemStyles.buttonText}>Lot ID - Process ID: {`${item.lotId}-${item.processId}`}</Text>
                                     <Text style={itemStyles.buttonText}>Fecha: {moment(+item.operationStartDate).format('DD/MM/YYYY')}</Text>
-                                    <Text style={itemStyles.buttonText}>Company ID: {item.companyId}</Text>
+                                    <Text numberOfLines={1} ellipsizeMode='tail' style={itemStyles.buttonText}>Company: {item.companyId} - {companies.find(x => x.value === item.companyId)?.label}</Text>
                                 </View>
                                 {
                                     i !== lotProcesses.length - 1 &&

@@ -97,7 +97,7 @@ const SuccessfulScreen = ({ route, navigation }: any) => {
             <TouchableOpacity style={styles.button} onPress={share}>
                 <Text style={styles.buttonText}>Share</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonAlt} onPress={() => navigation.popToTop()}>
+            <TouchableOpacity style={styles.buttonAlt} onPress={() => navigation.push('TraceabilityLotScreen', { lot: { lotId } })}>
                 <Text style={[styles.buttonText, {color: '#18c460'}]}>See traceability</Text>
             </TouchableOpacity>
             <View style={{paddingVertical: 80}}/>
