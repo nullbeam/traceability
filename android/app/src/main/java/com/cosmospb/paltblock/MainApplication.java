@@ -1,4 +1,4 @@
-package com.traceability;
+package com.cosmospb.paltblock;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

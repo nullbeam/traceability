@@ -74,9 +74,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.traceability"
+    namespace "com.cosmospb.paltblock"
     defaultConfig {
-        applicationId "com.traceability"
+        applicationId "com.cosmospb.paltblock"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
