@@ -34,7 +34,7 @@ const NewLotScreen = ({ navigation }: any) => {
                 privateKey,
                 options: {
                     chainId: 80001,
-                    gasPrice: 9500000000,
+                    gasPrice: 7500000000,
                     gasLimitMultiplier: 2
                 }
             });
@@ -184,7 +184,7 @@ const NewLotScreen = ({ navigation }: any) => {
             <TouchableOpacity style={styles.button} onPress={onSave}>
                 <Text style={styles.buttonText}>Create Lot</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonAlt} onPress={onSave}>
+            <TouchableOpacity style={styles.buttonAlt} onPress={() => navigation.popToTop()}>
                 <Text style={[styles.buttonText, {color: '#18c460'}]}>Cancel</Text>
             </TouchableOpacity>
             <View style={{paddingVertical: 80}}/>

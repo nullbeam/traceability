@@ -1,0 +1,1 @@
+export const PALTBLOCK_SERVICE_URL = "https://fl9euxsize.execute-api.us-east-1.amazonaws.com/Develop/paltblock";

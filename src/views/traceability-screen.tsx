@@ -8,6 +8,7 @@ import SuccessfulScreen from './successful-screen';
 import SearchLotScreen from './search-lot-screen';
 import AddToLotScreen from './add-to-lot-screen';
 import TraceabilityLotScreen from './traceability-lot-screen';
+import QRScreen from './qr-screen';
 
 const TraceabilityMainScreen = ({ navigation }: any) => {
     return (
@@ -40,6 +41,7 @@ const TraceabilityScreen = ({ navigation }: any) => {
           <Stack.Screen name="SearchLotScreen" component={SearchLotScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
           <Stack.Screen name="AddToLotScreen" component={AddToLotScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
           <Stack.Screen name="SuccessfulScreen" component={SuccessfulScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
+          <Stack.Screen name="QRScreen" component={QRScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
           <Stack.Screen name="ScanLotScreen" component={ScanLotScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
           <Stack.Screen name="TraceabilityLotScreen" component={TraceabilityLotScreen} options={{headerShown: true, title: "Traceability", headerTintColor: '#1f1f1f', headerStyle: {backgroundColor: '#00FF83'}}}/>
         </Stack.Navigator>

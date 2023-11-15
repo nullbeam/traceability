@@ -3,10 +3,11 @@ import React from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Utils } from '../utils';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Auth } from 'aws-amplify';
 
 const LogoImageSrc = require('../assets/images/PaltBlock_Logo.png');
  
-const AuthScreen = ({ navigation }: any) => {
+const AuthScreen = ({ navigation}: any) => {
     const [user, setUser] = React.useState<Record<string, string>>({});
 
     const onChange = (value: Record<string, any>) => {
@@ -18,24 +19,22 @@ const AuthScreen = ({ navigation }: any) => {
             Alert.alert('Please, complete username and password');
             return;
         }
-        if (user.username != 'paltblock' || user.password != '1u23?0G') {
-            Alert.alert('Invalid username or password');
-            return;
+        try {
+            const result = await Auth.signIn(user.username.trim(), user.password.trim());
+            let privateKey = await AsyncStorage.getItem('privatekey');
+            if (!privateKey) {
+                privateKey = Utils.generatePrivateKey();
+                await AsyncStorage.setItem('privatekey', privateKey);
+            }
+            if (result.challengeName === 'NEW_PASSWORD_REQUIRED') {
+                navigation.navigate('ChangePasswordScreen', { cognitoUser: result });
+            } else {
+                navigation.navigate('MainScreen', { screen: 'TraceabilityScreen' });
+            }
+        } catch (error: any) {
+            console.log(error);
+            Alert.alert('error signing', error.message);
         }
-        let privateKey = await AsyncStorage.getItem('privatekey');
-        if (!privateKey) {
-            privateKey = Utils.generatePrivateKey();
-            await AsyncStorage.setItem('privatekey', privateKey);
-        }
-        navigation.navigate('MainScreen', { screen: 'TraceabilityScreen' });
-        // try {
-        //     await Auth.signIn(user.username, user.password);
-        //     navigation.navigate('Home');
-        // } catch (error) {
-        //     console.log(error);
-        //     Alert.alert('error signing in', error.message);
-        // }
-        // Alert.alert('Error: Expected private key to be an Uint8Array with length 32');
     }
 
     return (
@@ -69,8 +68,8 @@ const AuthScreen = ({ navigation }: any) => {
             </View>
             <View style={Styles().footerContainer}>
                 <Text style={Styles().footerContainerText}>
-                    <Text>Problem with your account?</Text>
-                    <Text style={{fontWeight: 'bold'}}> Contact the administrator</Text>
+                    <Text>Problem with your account? </Text>
+                    <Text style={{fontWeight: 'bold', textDecorationLine: 'underline'}} onPress={() => navigation.navigate("ContactScreen")}>Contact the administrator</Text>
                 </Text>
             </View>
 

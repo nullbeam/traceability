@@ -17,8 +17,8 @@ const GreetingScreen = ({ navigation }: any) => {
             </View>
             <View style={Styles().footerContainer}>
                 <Text style={Styles().footerContainerText}>
-                    <Text>Problem with your account?</Text>
-                    <Text style={{fontWeight: 'bold'}}> Contact the administrator</Text>
+                    <Text>Problem with your account? </Text>
+                    <Text style={{fontWeight: 'bold', textDecorationLine: 'underline'}} onPress={() => navigation.navigate("ContactScreen")}>Contact the administrator</Text>
                 </Text>
             </View>
         </View>
@@ -43,7 +43,7 @@ const Styles = () => {
         headerTitle: {
             fontSize: 32,
             fontWeight: 'bold',
-            color: "#fff"
+            color: "#3f3f3f"
         },
         headerLogo: {
             width: 200,

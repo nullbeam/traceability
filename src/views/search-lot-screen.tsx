@@ -125,7 +125,7 @@ const SearchLotScreen = ({ navigation }: any) => {
                     <TextInput style={[styles.formGroupInputText]} placeholder="" onChangeText={setLotCode} keyboardType='number-pad'/>
                 </View>
                 <View style={{paddingVertical: 8}}/>
-                <View style={styles.formGroupInput}>
+                {/* <View style={styles.formGroupInput}>
                     <Text style={styles.formGroupInputLabel}>Company name:</Text>
                     <View style={{flex: 1}}>
                         <RNPickerSelect
@@ -137,7 +137,7 @@ const SearchLotScreen = ({ navigation }: any) => {
                             Icon={() => {<Icon size={16} name={'angle-down'}/>}}
                         />
                     </View>
-                </View>
+                </View> */}
             </View>
             <View style={{paddingVertical: 16}}/>
             <TouchableOpacity style={styles.button} onPress={searchLot}>

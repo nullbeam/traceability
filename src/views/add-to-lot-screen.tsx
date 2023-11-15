@@ -79,7 +79,7 @@ const AddToLotScreen = ({ route, navigation }: any) => {
     }
 
     const writeToClipboard = async () => {
-        await Clipboard.setString("xxxxxxxxxx");
+        await Clipboard.setString(lot.lotId);
         Toast.show("Copied to clipboard", {
             duration: Toast.durations.SHORT,
             position: Toast.positions.BOTTOM,
@@ -130,6 +130,9 @@ const AddToLotScreen = ({ route, navigation }: any) => {
                 </View>
                 <TouchableOpacity style={styles.buttonSecundary} onPress={() => navigation.push('TraceabilityLotScreen', { lot })}>
                     <Text style={[styles.buttonText, { color: '#1f1f1f' }]}>See traceability</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.buttonAlt, {marginTop: 4, paddingVertical: 12, marginHorizontal: 0, marginBottom: 16}]} onPress={() => navigation.push('QRScreen', { lotId: lot.lotId, processId: lot.processId })}>
+                    <Text style={[styles.buttonText, { color: '#1f1f1f' }]}>See QR</Text>
                 </TouchableOpacity>
                 <View style={{marginBottom: 20, borderWidth: 1, borderColor: '#18c460'}}/>
                 <View style={{paddingVertical: 16}}/>
@@ -215,7 +218,7 @@ const AddToLotScreen = ({ route, navigation }: any) => {
                 </View>
             </View>
             <TouchableOpacity style={styles.button} onPress={onSave}>
-                <Text style={styles.buttonText}>Create Lot</Text>
+                <Text style={styles.buttonText}>Add Lot</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonAlt} onPress={onSave}>
                 <Text style={[styles.buttonText, {color: '#18c460'}]}>Cancel</Text>
